@@ -35,6 +35,14 @@ export default function Dashboard() {
       setCurrentDateTime(new Date());
     }, 1000);
 
+    setData({
+      humidity: 68,
+      vibration: false,
+      rainfall: 12.5,
+      tilt: 10.2,
+      hasWarning: true,
+      warningMessage: 'Độ ẩm cao, có nguy cơ sạt lở',
+    });
     return () => clearInterval(timer);
   }, []);
 
