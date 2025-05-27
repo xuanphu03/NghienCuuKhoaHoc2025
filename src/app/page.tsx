@@ -19,6 +19,7 @@ import WarningNotification from '@/components/warning-nofitication';
 interface DataSensorProps {
   doam: number | undefined,
   luongMua: number | undefined,
+  rung: number | undefined,
 }
 
 export default function Dashboard() {
