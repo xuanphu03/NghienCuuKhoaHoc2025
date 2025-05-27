@@ -29,13 +29,14 @@ export default function WarningNotification() {
   }, []);
 
   // Hàm kích hoạt thông báo thủ công
-  const triggerWarning = () => {
-    setIsOpen(true);
-    setAutoTriggered(false);
-  };
+  // const triggerWarning = () => {
+  //   setIsOpen(true);
+  //   setAutoTriggered(false);
+  // };
 
   // Hàm đóng thông báo
   const closeWarning = () => {
+    console.log(autoTriggered)
     setIsOpen(false);
   };
 
