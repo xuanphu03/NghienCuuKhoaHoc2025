@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import {
-  AlertCircle,
   Droplets,
   ImageIcon,
   ZoomInIcon as TiltShift,
@@ -11,10 +10,8 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Image from 'next/image';
 import { getData } from '@/components/hooks/getData';
 import WarningNotification from '@/components/warning-nofitication';
 
