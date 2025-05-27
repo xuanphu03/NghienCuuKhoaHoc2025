@@ -17,8 +17,8 @@ import { getData } from '@/components/hooks/getData';
 import WarningNotification from '@/components/warning-nofitication';
 
 interface DataSensorProps {
-  doam: number,
-  luongMua: number
+  doam: number | undefined,
+  luongMua: number | undefined,
 }
 
 export default function Dashboard() {
@@ -34,7 +34,7 @@ export default function Dashboard() {
     warningMessage: 'Độ ẩm cao, có nguy cơ sạt lở',
   });
 
-  const [isData, isSetData] = useState<DataSensorProps>();
+  const [isData, isSetData] = useState<DataSensorProps | undefined >();
 
   // Update the date/time every second
   useEffect(() => {
@@ -109,11 +109,11 @@ export default function Dashboard() {
                 <div className="text-2xl font-bold">{isData?.doam}%</div>
                 <Progress value={isData?.doam} className="mt-2" />
                 <p className="text-xs text-muted-foreground mt-1">
-                  {isData?.doam > 70
+                  {isData?.doam && (isData?.doam > 70
                     ? 'Độ ẩm cao'
                     : isData?.doam < 30
                     ? 'Độ ẩm thấp'
-                    : 'Độ ẩm bình thường'}
+                    : 'Độ ẩm bình thường')}
                 </p>
               </CardContent>
             </Card>
