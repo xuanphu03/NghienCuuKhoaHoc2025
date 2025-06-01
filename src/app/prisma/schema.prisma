@@ -3,11 +3,6 @@ datasource db {
   url  	    = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma" 
-}
-
 model SensorHistory {
   id                  String   @id @default(uuid())
   timestamp           DateTime @default(now())
