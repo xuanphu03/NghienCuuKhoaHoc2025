@@ -1,0 +1,22 @@
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma" 
+}
+
+model SensorHistory {
+  id                  String   @id @default(uuid())
+  timestamp           DateTime @default(now())
+  temp                Float
+  humidity            Float
+  inclination         Float
+  rainfall            Float 
+  scrapingCycleCount  Int    
+  vibrationCount      Int    
+
+  @@map("sensor_history")
+}

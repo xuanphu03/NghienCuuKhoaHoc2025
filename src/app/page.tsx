@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import {
-  
   Droplets,
   ImageIcon,
+  Radio,
   ZoomInIcon as TiltShift,
   Timer,
   Vibrate,
@@ -17,25 +17,18 @@ import { getData } from '@/components/hooks/getData';
 import WarningNotification from '@/components/warning-nofitication';
 
 interface DataSensorProps {
-  doam: number | undefined,
-  luongMua: number | undefined,
-  rung: number | undefined,
+  doam: number | undefined;
+  luongMua: number | undefined;
+  nguy_co_sat_lo: number | undefined;
+  goc_do: number | undefined;
+  soLanGauLat: number | undefined;
+  soLanRung10Phut: number | undefined;
 }
 
 export default function Dashboard() {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
-  // Sample data - in a real app, this would come from an API or sensors
-  const [data, setData] = useState({
-    humidity: 68,
-    vibration: false,
-    rainfall: 12.5,
-    tilt: 10.2,
-    hasWarning: true,
-    warningMessage: 'Độ ẩm cao, có nguy cơ sạt lở',
-  });
-
-  const [isData, isSetData] = useState<DataSensorProps | undefined >();
+  const [isData, isSetData] = useState<DataSensorProps | undefined>();
 
   // Update the date/time every second
   useEffect(() => {
@@ -43,19 +36,10 @@ export default function Dashboard() {
       setCurrentDateTime(new Date());
     }, 1000);
 
-    setData({
-      humidity: 68,
-      vibration: false,
-      rainfall: 12.5,
-      tilt: 10.2,
-      hasWarning: true,
-      warningMessage: 'Độ ẩm cao, có nguy cơ sạt lở',
-    });
-
     async function fetchData() {
-      const result = await getData('sensor_data'); 
-      console.log('Firebase data:', result);
-      isSetData(result);
+      getData('sensor_data', (data) => {
+        isSetData(data);
+      });
     }
 
     fetchData();
@@ -75,7 +59,7 @@ export default function Dashboard() {
   }).format(currentDateTime);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
       <header className="sticky top-0 z-10 border-b bg-background flex justify-center items-center">
         <div className="container h-16 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold">Hệ thống Giám sát Môi trường</h1>
@@ -87,21 +71,12 @@ export default function Dashboard() {
       </header>
       <main className="flex-1 py-6 flex justify-center">
         <div className="container relative">
-          {data.hasWarning && (
-            // <Alert
-            //   variant="destructive"
-            //   className="absolute w-3/4 h-2/3 z-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            // >
-            //   <AlertCircle className="h-4 w-4" />
-            //   <AlertTitle>Cảnh báo!</AlertTitle>
-            //   <AlertDescription>{data.warningMessage}</AlertDescription>
-            // </Alert>
-
-            <WarningNotification />
+          {isData?.nguy_co_sat_lo && (
+            <WarningNotification stateWarning={isData.nguy_co_sat_lo} />
           )}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Humidity Card */}
-            <Card>
+            <Card className="border-l-4 border-l-pink-500">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Độ ẩm</CardTitle>
                 <Droplets className="h-4 w-4 text-muted-foreground" />
@@ -110,16 +85,21 @@ export default function Dashboard() {
                 <div className="text-2xl font-bold">{isData?.doam}%</div>
                 <Progress value={isData?.doam} className="mt-2" />
                 <p className="text-xs text-muted-foreground mt-1">
-                  {isData?.doam && (isData?.doam > 70
-                    ? 'Độ ẩm cao'
-                    : isData?.doam < 30
-                    ? 'Độ ẩm thấp'
-                    : 'Độ ẩm bình thường')}
+                  {isData?.doam &&
+                    (isData?.doam > 70
+                      ? 'Độ ẩm cao'
+                      : isData?.doam < 30
+                      ? 'Độ ẩm thấp'
+                      : 'Độ ẩm bình thường')}
                 </p>
               </CardContent>
             </Card>
             {/* Vibration Card */}
-            <Card>
+            <Card
+              className={`border-l-4 border-l-green-500 ${
+                isData?.nguy_co_sat_lo && 'border-l-red-500'
+              }`}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Rung chấn</CardTitle>
                 <Vibrate className="h-4 w-4 text-muted-foreground" />
@@ -127,23 +107,27 @@ export default function Dashboard() {
               <CardContent>
                 <div className="flex items-center gap-2">
                   <div className="text-2xl font-bold">
-                    {isData?.rung ? 'Có' : 'Không'}
+                    {isData?.nguy_co_sat_lo ? 'Có' : 'Không'}
                   </div>
-                  <Badge variant={isData?.rung ? 'destructive' : 'secondary'}>
-                    {isData?.rung ? 'Đang rung' : 'Ổn định'}
+                  <Badge
+                    variant={
+                      isData?.nguy_co_sat_lo ? 'destructive' : 'secondary'
+                    }
+                  >
+                    {isData?.nguy_co_sat_lo ? 'Đang rung' : 'Ổn định'}
                   </Badge>
                 </div>
                 <div className="mt-4 h-[40px] flex items-center">
                   <div
                     className={`w-full h-2 rounded-full ${
-                      isData?.rung ? 'bg-red-500' : 'bg-green-500'
+                      isData?.nguy_co_sat_lo ? 'bg-red-500' : 'bg-green-500'
                     }`}
                   />
                 </div>
               </CardContent>
             </Card>
             {/* Rainfall Card */}
-            <Card>
+            <Card className="border-l-4 border-l-blue-500">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Lượng mưa</CardTitle>
                 <svg
@@ -167,28 +151,22 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{isData?.luongMua} ml</div>
-                <div className="mt-4 h-[40px] flex items-end">
-                  {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-                    <div
-                      key={day}
-                      className="flex-1 bg-primary/80 mx-0.5 rounded-t"
-                      style={{ height: `${Math.random() * 100}%` }}
-                    />
-                  ))}
-                </div>
-                <div className="flex justify-between mt-1 text-xs text-muted-foreground">
-                  <span>T2</span>
-                  <span>T3</span>
-                  <span>T4</span>
-                  <span>T5</span>
-                  <span>T6</span>
-                  <span>T7</span>
-                  <span>CN</span>
+              </CardContent>
+
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Số lần rung trong 10 phút
+                </CardTitle>
+                <Radio size={16} />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {isData?.soLanRung10Phut} lần / 10 phút
                 </div>
               </CardContent>
             </Card>
             {/* Tilt Card */}
-            <Card>
+            <Card className="border-l-4 border-l-gray-500">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">
                   Độ nghiêng
@@ -196,16 +174,22 @@ export default function Dashboard() {
                 <TiltShift className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{data.tilt}°</div>
+                <div className="text-2xl font-bold">
+                  {isData?.goc_do != null
+                    ? `${Number(isData.goc_do).toFixed(2)}°`
+                    : 'Đang tải...'}
+                </div>
                 <div className="relative mt-20 h-[60px] flex items-center justify-center">
                   <div className="w-[100px] h-[2px] bg-muted-foreground" />
                   <div
                     className="absolute w-[200px] h-[2px] bg-primary origin-center"
-                    style={{ transform: `rotate(${data.tilt}deg)` }}
+                    style={{ transform: `rotate(${isData?.goc_do}deg)` }}
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-10 text-center">
-                  {data.tilt > 5 ? 'Độ nghiêng cao' : 'Độ nghiêng bình thường'}
+                  {isData?.goc_do && isData?.goc_do > 5
+                    ? 'Độ nghiêng cao'
+                    : 'Độ nghiêng bình thường'}
                 </p>
               </CardContent>
             </Card>
@@ -256,6 +240,16 @@ export default function Dashboard() {
                 </Tabs>
               </CardContent>
             </Card>
+          </div>
+
+          <div>
+            
+          </div>
+
+          <div>
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              © {new Date().getFullYear()} Nghiên cứu khoa học. From Xuan Phu with love hẹ hẹ hẹ
+            </div>
           </div>
         </div>
       </main>

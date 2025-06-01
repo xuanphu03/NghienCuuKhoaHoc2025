@@ -1,15 +1,17 @@
 import { database } from '@/lib/firebase';
-import { ref, get } from 'firebase/database';
+import { ref, onValue  } from 'firebase/database';
 
 
-export async function getData(path: string) {
+export function getData(path: string, callback: (data: any) => void) {
   try {
-    const snapshot = await get(ref(database, path));
-    if (snapshot.exists()) {
-      return snapshot.val();
-    }
-    console.log('No data available');
-    return null;
+    const dbRef = ref(database, path);
+
+    const unsubscribe = onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      callback(data);
+    });
+
+    return unsubscribe;
   } catch (error) {
     console.error('Error getting data:', error);
     return null;
