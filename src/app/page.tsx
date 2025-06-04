@@ -71,9 +71,12 @@ export default function Dashboard() {
       </header>
       <main className="flex-1 py-6 flex justify-center">
         <div className="container relative">
-          {isData?.nguy_co_sat_lo && (
-            <WarningNotification stateWarning={isData.nguy_co_sat_lo} />
-          )}
+          <WarningNotification
+            doam={isData?.doam}
+            nguy_co_sat_lo={isData?.nguy_co_sat_lo}
+            soLanGauLat={isData?.soLanGauLat}
+            goc_do={isData?.goc_do}
+          />
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Humidity Card */}
             <Card className="border-l-4 border-l-pink-500">
@@ -83,10 +86,11 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{isData?.doam}%</div>
-                <Progress value={isData?.doam} className="mt-2" />
-                <p className="text-xs text-muted-foreground mt-1">
+                <Progress value={isData?.doam} className="mt-2 h-3" />
+
+                <p className="text-md text-muted-foreground mt-1">
                   {isData?.doam &&
-                    (isData?.doam > 70
+                    (isData?.doam > 80
                       ? 'Độ ẩm cao'
                       : isData?.doam < 30
                       ? 'Độ ẩm thấp'
@@ -101,7 +105,9 @@ export default function Dashboard() {
               }`}
             >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Rung chấn</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Nhận diện cây nghiêng
+                </CardTitle>
                 <Vibrate className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -150,7 +156,12 @@ export default function Dashboard() {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{isData?.luongMua} ml</div>
+                <div className="text-2xl font-bold">
+                  {isData?.soLanGauLat != null
+                    ? Math.round((isData.soLanGauLat * 0.173 ) * 100) / 100
+                    : 'Đang tải...'}{' '}
+                  mm / phút
+                </div>
               </CardContent>
 
               <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -186,7 +197,7 @@ export default function Dashboard() {
                     style={{ transform: `rotate(${isData?.goc_do}deg)` }}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground mt-10 text-center">
+                <p className="text-md text-muted-foreground mt-10 text-center">
                   {isData?.goc_do && isData?.goc_do > 5
                     ? 'Độ nghiêng cao'
                     : 'Độ nghiêng bình thường'}
@@ -242,13 +253,12 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          <div>
-            
-          </div>
+          <div></div>
 
           <div>
             <div className="mt-6 text-center text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Nghiên cứu khoa học. From Xuan Phu with love hẹ hẹ hẹ
+              © {new Date().getFullYear()} Nghiên cứu khoa học. From Xuan Phu
+              with love hẹ hẹ hẹ
             </div>
           </div>
         </div>
