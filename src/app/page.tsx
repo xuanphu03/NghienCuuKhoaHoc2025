@@ -120,7 +120,7 @@ export default function Dashboard() {
                       isData?.nguy_co_sat_lo ? 'destructive' : 'secondary'
                     }
                   >
-                    {isData?.nguy_co_sat_lo ? 'Đang rung' : 'Ổn định'}
+                    {isData?.nguy_co_sat_lo ? 'Đang nghiêng' : 'Ổn định'}
                   </Badge>
                 </div>
                 <div className="mt-4 h-[40px] flex items-center">
